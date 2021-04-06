@@ -9,13 +9,218 @@
 </head>
 <body>
     <div>
-        Hello woeld!
+        @*須將Vue註冊的ID綁定HTML*@
+        <div class="container flex" id="TodoListView">
+            <!--未完成表格 -->
+            <div class="col-lg-12 com-xs-12">
+                <div class="table-responsive-vertical shadow-z-1">
+                    <table class="table table-bordered table-mc-indigo table-hover" id="notFinfshTable">
+                        <caption style="color:red">未完成</caption>
+                        <thead class="bg-danger">
+                            <tr>
+                                <th>序號</th>
+                                <th>標題</th>
+                                <th>內容</th>
+                                <th>開始日期</th>
+                                <th>結束日期</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(item,index) in notFinishDataList" :key="index">
+                            <tr>
+                                <td data-title="序號" style="display:table-cell; vertical-align:middle">{{index+1}}</td>
+                                <td data-title="標題" style="display:table-cell; vertical-align:middle">{{item.myTitle}}</td>
+                                <td data-title="內容" style="display:table-cell; vertical-align:middle">{{item.myDetail}}</td>
+                                <td data-title="開始日期" style="display:table-cell; vertical-align:middle">{{item.myStartDate}}</td>
+                                <td data-title="結束日期" style="display:table-cell; vertical-align:middle">{{item.myDueDate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--未完成表格End -->
+             <!--進行中表格 -->
+            <div class="col-lg-12 com-xs-12">
+                <div class="table-responsive-vertical shadow-z-1">
+                    <table class="table table-bordered table-mc-indigo table-hover" id="DoingTable">
+                        <caption style="color:sandybrown">進行中</caption>
+                        <thead class="bg-warning">
+                            <tr>
+                                <th>序號</th>
+                                <th>標題</th>
+                                <th>內容</th>
+                                <th>開始日期</th>
+                                <th>結束日期</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(item,index) in DoingDataList" :key="index">
+                            <tr>
+                                <td data-title="序號" style="display:table-cell; vertical-align:middle">{{index+1}}</td>
+                                <td data-title="標題" style="display:table-cell; vertical-align:middle">{{item.myTitle}}</td>
+                                <td data-title="內容" style="display:table-cell; vertical-align:middle">{{item.myDetail}}</td>
+                                <td data-title="開始日期" style="display:table-cell; vertical-align:middle">{{item.myStartDate}}</td>
+                                <td data-title="結束日期" style="display:table-cell; vertical-align:middle">{{item.myDueDate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--進行中表格End -->
+             <!--已完成表格 -->
+            <div class="col-lg-12 com-xs-12">
+                <div class="table-responsive-vertical shadow-z-1">
+                    <table class="table table-bordered table-mc-indigo table-hover" id="isFinfshTable">
+                        <caption style="color:blue">已完成</caption>
+                        <thead class="bg-primary">
+                            <tr>
+                                <th>序號</th>
+                                <th>標題</th>
+                                <th>內容</th>
+                                <th>開始日期</th>
+                                <th>結束日期</th>
+                            </tr>
+                        </thead>
+                        <tbody v-for="(item,index) in isFinishDataList" :key="index">
+                            <tr>
+                                <td data-title="序號" style="display:table-cell; vertical-align:middle">{{index+1}}</td>
+                                <td data-title="標題" style="display:table-cell; vertical-align:middle">{{item.myTitle}}</td>
+                                <td data-title="內容" style="display:table-cell; vertical-align:middle">{{item.myDetail}}</td>
+                                <td data-title="開始日期" style="display:table-cell; vertical-align:middle">{{item.myStartDate}}</td>
+                                <td data-title="結束日期" style="display:table-cell; vertical-align:middle">{{item.myDueDate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--已完成表格End -->
+        </div>
     </div>
 
     @*1.引用JS*@
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
     <script>
+
+        //先實例化一個vue
+        var vueApp = new Vue({
+            el: "#TodoListView",//範圍宣告需對應到Html會被作用到的id
+            //定義物件
+            data: {
+                //畫面上所需要用的陣列
+                dataList: [],
+            },
+            //init畫面建立DOM生成前就執行(使用:created)
+            //init畫面建立DOM生成後才執行(使用:mounted)
+            mounted() {
+                //在畫面建立的時候需要呼叫方法到後端要資料
+                _self = this;
+                //在Vue要使用變數都須加上this指向自己
+                _self.getData();
+
+            },
+            //所有方法都寫在Methods中
+            methods: {
+
+                //生成畫面資料
+                getData: function () {
+                    _self = this;
+                    //先將資料寫死在畫面
+                    //將資料寫入date1陣列中(未完成資料)
+                    let date1 = {
+                        myTitle: "學習api",
+                        myDetail: "使用api到後端要畫面資料",
+                        myStartDate: "2021-04-07",
+                        myDueDate: "2021-04-17",
+                        myStatus: 0 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date1);
+
+
+                    //將資料寫入date2陣列中(進行中資料)
+                    let date2 = {
+                        myTitle: "切版",
+                        myDetail: "使用HTML拉出ToDoList的畫面",
+                        myStartDate: "2021-04-06",
+                        myDueDate: "2021-04-07",
+                        myStatus: 1 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date2);
+
+
+                    //將資料寫入date3陣列中(已完成資料)
+                    let date3 = {
+                        myTitle: "建立專案",
+                        myDetail: "建一個MVC的專案檔",
+                        myStartDate: "2021-04-01",
+                        myDueDate: "2021-04-06",
+                        myStatus: 2 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date3);
+
+
+                    //將資料寫入date4陣列中(未完成資料)
+                    let date4 = {
+                        myTitle: "存取資料",
+                        myDetail: "使用local Storgae 存取資料",
+                        myStartDate: "2021-04-07",
+                        myDueDate: "2021-04-17",
+                        myStatus: 0 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date4);
+
+                    //將資料寫入date5陣列中(未完成資料)
+                    let date5 = {
+                        myTitle: "新增功能",
+                        myDetail: "增加新增按鈕，並彈出視窗，來新增資料",
+                        myStartDate: "2021-04-07",
+                        myDueDate: "2021-04-17",
+                        myStatus: 0 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date5);
+
+                    //將資料寫入date6陣列中(未完成資料)
+                    let date6 = {
+                        myTitle: "更改狀態功能",
+                        myDetail: "點選畫面上的按鈕並修改完成的狀態",
+                        myStartDate: "2021-04-07",
+                        myDueDate: "2021-04-17",
+                        myStatus: 0 //未完成:0,進行中:1,已完成:2,其他狀態待擴充
+                    }
+                    //將date1放回dataList中
+                    _self.dataList.push(date6);
+                },
+
+            },
+            //監聽屬性(畫面上會因為發生某個事件或參數的變化，而導致畫面的UI或參數需要跟隨著變化時可使用)
+            computed: {
+                //過濾未完成的資料
+                notFinishDataList: function () {
+                    _self = this;
+                    //這邊使用filter做陣列的過濾
+                    //filter用法 陣列.filter(變數1 =>變數1.陣列的物件 == 條件 )
+                    return _self.dataList.filter(item => item.myStatus == 0);
+                },
+
+                //過濾進行中的資料
+                DoingDataList: function () {
+                    _self = this;
+                    //這邊使用filter做陣列的過濾
+                    //filter用法 陣列.filter(變數1 =>變數1.陣列的物件 == 條件 )
+                    return _self.dataList.filter(item => item.myStatus == 1);
+                },
+
+                //過濾已完成的資料
+                isFinishDataList: function () {
+                    _self = this;
+                    //這邊使用filter做陣列的過濾
+                    //filter用法 陣列.filter(變數1 =>變數1.陣列的物件 == 條件 )
+                    return _self.dataList.filter(item => item.myStatus == 2);
+                },
+
+            }
+        })
 
     </script>
 </body>
